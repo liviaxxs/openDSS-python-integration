@@ -1,4 +1,4 @@
-## Week 2 – EnergyMeter and Monitor behavior analysis
+EnergyMeter and Monitor behavior analysis
 
 This week focused on understanding the behavior of the EnergyMeter and Monitor
 devices in OpenDSS and on investigating the issue of zero-valued outputs observed
