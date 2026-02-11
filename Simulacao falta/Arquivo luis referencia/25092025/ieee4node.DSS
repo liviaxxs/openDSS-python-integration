@@ -1,0 +1,51 @@
+clear
+//********************** Defini��o do circuito
+New circuit.IEEE4NODE basekv=12.47 pu=1 angle=0 phases=3 bus1=1
+set DefaultBaseFrequency=60
+set datapath="C:\Users\Livia Alves\Documents\Exercicios OpenDss\Simulacao falta\Arquivo luis referencia"
+
+Set Emergvmaxpu=1.45
+Set Emergvminpu=0.5
+Set Normvmaxpu=1.4
+Set Normvminpu=0.55
+
+//********************** Curva de carga (para o futuro, mas n�o usada agora)
+New loadshape.daily npts=24 interval=1 mult=(0.25 0.25 0.25 0.25 0.25 0.25 0.5 0.5 0.5 0.5 0.5 0.5 1 1 1 1 1 1 1.25 1.25 1.25 1.25 1.25 1.25)
+
+//********************** Define o c�digo de linha
+New linecode.L1 nphases=3
+~ rmatrix=(0.2843 0.0969 0.0954 | 0.0969 0.2899 0.0982 | 0.0954 0.0982 0.2868)
+~ xmatrix=(0.6698 0.3117 0.2392 | 0.3117 0.6513 0.2632 | 0.2392 0.2632 0.6618)
+~ units=km
+
+//********************** Linha 1-2
+New line.LINHA_S-1 bus1=1 bus2=2 length=0.6096 phases=3 units=km linecode=L1
+
+//********************** Transformador 2-3
+New transformer.TF1 phases=3 windings=2 buses=(2,3) conns=(wye,wye)
+~ kvs=(12.47,4.16)
+~ kvas=(6000,6000)
+~ XHL=6
+~ wdg=1 %r=0.5
+~ wdg=2 %r=0.5
+
+//********************** Linha 3-4
+New line.LINHA_3-4 bus1=3 bus2=4 length=0.762 phases=3 units=km linecode=L1
+
+//********************** Carga
+New load.Carga1 bus1=4 phases=3 kv=4.16 kva=6000 pf=0.9 model=1 class=1 duty=daily
+
+//********************** Monitores
+New monitor.CARGA1_VT element=load.Carga1 terminal=1 mode=32 ppolar=no
+New monitor.CARGA1_PQ element=load.Carga1 terminal=1 mode=1 ppolar=no
+
+//********************** Modo de solu��o
+Set voltagebases=(12.47,4.16)
+Calcvoltagebases
+
+//Modo teste
+set mode = snapshot
+batchedit load..* vminpu=0.7
+Solve
+
+
